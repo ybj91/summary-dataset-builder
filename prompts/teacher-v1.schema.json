@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "accepted": {"type": "boolean"},
+    "summary": {"type": "string"},
+    "rejection_reason": {"type": "string"}
+  },
+  "required": ["accepted", "summary", "rejection_reason"],
+  "additionalProperties": false
+}
