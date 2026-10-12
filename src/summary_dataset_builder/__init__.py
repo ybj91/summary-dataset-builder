@@ -1,1 +1,1 @@
-"""Source-grounded summarization dataset builder (initial scaffold)."""
+"""Offline-first, resumable source-grounded summarization dataset builder."""

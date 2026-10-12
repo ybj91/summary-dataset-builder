@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dataset collection | Live progress</title>
+<style>
+:root{color-scheme:light;--ink:#17243b;--muted:#5e6d82;--line:#dce4ee;--blue:#2859c0;--green:#147958;--amber:#975e0a;--red:#b43b49}
+*{box-sizing:border-box}body{margin:0;background:#f3f6fb;color:var(--ink);font:14px/1.6 "Segoe UI",system-ui,sans-serif}header{background:#142740;color:#fff;padding:28px max(22px,calc((100vw - 1280px)/2))}.top{display:flex;justify-content:space-between;gap:20px;align-items:center}.eyebrow{color:#a6c8ff;font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase}h1{font-size:29px;letter-spacing:-.035em;margin:3px 0}header p{margin:0;color:#c9d8eb;font-size:12px}.badge{display:inline-block;background:#263f5b;border:1px solid #637b98;color:#fff;padding:6px 12px;border-radius:30px;font-size:12px;white-space:nowrap}.badge.running,.badge.completed{background:#14543f;border-color:#559b7f}.badge.stopped,.badge.failed{background:#6d3439;border-color:#ba7880}
+main{max-width:1324px;margin:auto;padding:20px 22px 35px}.refresh{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;gap:12px;color:var(--muted);font-size:12px}button{font:inherit;font-weight:600;color:var(--blue);background:white;border:1px solid #b5c8e7;padding:8px 13px;border-radius:8px;cursor:pointer}button:hover{background:#eaf1fd}button:disabled{opacity:.5;cursor:wait}button:focus-visible{outline:3px solid #84a6e4;outline-offset:2px}.error{background:#fff0f1;color:#982b3c;border:1px solid #e6b4bc;padding:12px 15px;border-radius:9px;margin-bottom:16px}.warning{background:#fff6e6;border:1px solid #ebd5a6;color:#795014;padding:11px 15px;border-radius:9px;margin-bottom:16px;font-size:12px}[hidden]{display:none!important}
+.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:18px}.metric{background:#fff;border:1px solid var(--line);border-radius:11px;padding:18px 20px}.metric small{display:block;color:var(--muted);font-size:12px}.metric strong{display:block;font-size:30px;line-height:1.35;font-variant-numeric:tabular-nums;letter-spacing:-.04em;margin:3px 0}.metric .foot{font-size:11px;color:var(--muted);margin-top:4px}.metric.primary{border-top:3px solid var(--blue);padding-top:16px}.metric.primary strong{color:var(--blue)}.metric.money strong{font-size:26px}.layout{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(270px,1fr);gap:18px;margin-bottom:18px}.panel{background:white;border:1px solid var(--line);border-radius:11px;overflow:hidden}.panel-head{border-bottom:1px solid var(--line);padding:14px 20px;display:flex;justify-content:space-between;align-items:center;gap:12px}.panel-head h2{font-size:15px;margin:0}.subtle{font-size:11px;color:var(--muted)}.progress-body{padding:20px}.progress-row{margin-bottom:22px}.progress-row:last-child{margin-bottom:0}.row-label{display:flex;justify-content:space-between;gap:12px;align-items:baseline;margin-bottom:7px}.row-label strong{font-size:13px}.row-label span{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}progress{width:100%;height:13px;accent-color:var(--blue);display:block;border:0;border-radius:8px;overflow:hidden}progress::-webkit-progress-bar{background:#eaf0f8}progress::-webkit-progress-value{background:#386acb;border-radius:8px}#validation-progress,#test-progress{accent-color:#438e92}#validation-progress::-webkit-progress-value,#test-progress::-webkit-progress-value{background:#438e92}.totals{padding:14px 20px;background:#f9fbff;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
+.eta{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:18px 20px;margin-bottom:18px;background:#edf3ff;border:1px solid #c6d6f0;border-radius:11px}.eta small{display:block;color:var(--muted);font-size:12px}.eta strong{font-size:27px;letter-spacing:-.03em;color:var(--blue);white-space:nowrap}.eta-details{max-width:760px;font-size:12px;color:var(--muted)}.eta-details p{margin:3px 0}@media(max-width:600px){.eta{align-items:start;flex-direction:column;gap:8px}.eta strong{font-size:24px}}
+dl{margin:0;padding:10px 20px 16px}dl>div{display:flex;justify-content:space-between;gap:20px;border-bottom:1px solid #edf0f5;padding:8px 0}dl>div:last-child{border:0}dt{color:var(--muted);font-size:12px}dd{margin:0;font-size:12px;font-weight:600;text-align:right;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;text-align:left;font-size:12px}th{padding:11px 20px;background:#f9fbfe;font-weight:600;color:var(--muted);white-space:nowrap}td{padding:11px 20px;border-top:1px solid #ecf0f5;font-variant-numeric:tabular-nums;white-space:nowrap}.pass{color:var(--green);font-weight:700}.fail{color:var(--red);font-weight:700}.empty{padding:20px;color:var(--muted);font-size:13px}footer{margin-top:16px;font-size:11px;color:var(--muted);overflow-wrap:anywhere}
+@media(max-width:900px){.metrics{grid-template-columns:repeat(2,1fr)}.layout{grid-template-columns:1fr}.metric strong{font-size:28px}}
+@media(max-width:520px){header{padding:20px 16px}.top{display:block}h1{font-size:25px}.badge{margin-top:12px}main{padding:14px 12px}.metrics{gap:8px}.metric{padding:13px}.metric.primary{padding-top:11px}.metric.money strong{font-size:22px}.metric small{font-size:11px}.panel-head,.progress-body{padding:15px}.row-label{align-items:start}td,th{padding:10px 13px}.refresh{align-items:start}}
+</style>
+</head>
+<body>
+<header><div class="top"><div><div class="eyebrow">Summary dataset builder / Live tracking</div><h1>Collection progress</h1><p id="run-label">Connecting to local run...</p></div><span id="worker-state" class="badge">Loading</span></div></header>
+<main>
+<noscript><div class="error">Enable JavaScript for live updates. Collection itself does not depend on this dashboard.</div></noscript>
+<div class="refresh"><span id="refresh-state" aria-live="polite">Refreshing every 5 seconds</span><button type="button" id="refresh-now">Refresh now</button></div>
+<div id="connection-error" class="error" role="alert" hidden></div>
+<div id="run-warning" class="warning" hidden></div>
+<section class="metrics" aria-label="Collection totals">
+<div class="metric primary"><small>Usable training pairs</small><strong id="train-count">--</strong><div class="foot" id="train-caption">Toward the training target</div></div>
+<div class="metric"><small>Generation attempts</small><strong id="generation-count">--</strong><div class="foot" id="next-checkpoint">Next checkpoint: --</div></div>
+<div class="metric money"><small>Budget accounted for</small><strong id="committed-cost">--</strong><div class="foot" id="budget-caption">Confirmed charges + reservations</div></div>
+<div class="metric"><small>Retries so far</small><strong id="retry-count">--</strong><div class="foot" id="retry-caption">Shared across this run</div></div>
+</section>
+<section class="eta" aria-label="Estimated time remaining"><div><small>Estimated time remaining</small><strong id="eta-remaining">Calculating...</strong></div><div class="eta-details"><p id="eta-finish">Waiting for recent throughput.</p><p id="eta-rate"></p><p id="eta-note">An estimate, not a guaranteed completion time.</p></div></section>
+<div class="layout">
+<section class="panel"><div class="panel-head"><h2>Progress by split</h2><span class="subtle" id="overall-progress">-- usable pairs</span></div>
+<div class="progress-body">
+<div class="progress-row"><div class="row-label"><strong>Training</strong><span id="train-label">--</span></div><progress id="train-progress" value="0" max="100" aria-label="Training progress"></progress></div>
+<div class="progress-row"><div class="row-label"><strong>Validation</strong><span id="validation-label">--</span></div><progress id="validation-progress" value="0" max="100" aria-label="Validation progress"></progress></div>
+<div class="progress-row"><div class="row-label"><strong>Test</strong><span id="test-label">--</span></div><progress id="test-progress" value="0" max="100" aria-label="Test progress"></progress></div>
+</div><div class="totals" id="dispositions">Loading sample dispositions...</div></section>
+<section class="panel"><div class="panel-head"><h2>Run details</h2><span class="subtle">Read only</span></div><dl>
+<div><dt>In-flight requests</dt><dd id="inflight-count">--</dd></div>
+<div><dt>Assessment attempts</dt><dd id="assessment-count">--</dd></div>
+<div><dt>Confirmed charges</dt><dd id="known-cost">--</dd></div>
+<div><dt>Reserved, not confirmed</dt><dd id="reserved-cost">--</dd></div>
+<div><dt>Available budget</dt><dd id="remaining-budget">--</dd></div>
+<div><dt>Unconfirmed earlier charges</dt><dd id="unconfirmed-count">--</dd></div>
+<div><dt>Quarantined accepted pairs</dt><dd id="quarantine-count">--</dd></div>
+<div><dt>Current operational gates</dt><dd id="gate-policy">--</dd></div>
+<div><dt>Last worker batch update</dt><dd id="batch-update">--</dd></div>
+</dl></section></div>
+<section class="panel"><div class="panel-head"><h2>Checkpoints</h2><span class="subtle">Operational yield, not factual accuracy</span></div><div id="stage-empty" class="empty">No completed checkpoints yet.</div>
+<div class="table-wrap"><table id="stage-table" hidden><thead><tr><th>Generation attempts</th><th>Stage size</th><th>Valid structure</th><th>Transport failures</th><th>Usable pairs</th><th>Outcome</th></tr></thead><tbody id="stages"></tbody></table></div></section>
+<footer id="footer">Local, read-only monitoring. Closing this dashboard does not stop the collector.</footer>
+</main>
+<script id="dashboard-code">
+"use strict";
+(() => {
+  const $ = id => document.getElementById(id);
+  const text = (id, value) => { $(id).textContent = value; };
+  const count = value => Number(value).toLocaleString();
+  const dollars = value => "$" + Number(value).toFixed(6);
+  const percent = value => (Number(value) * 100).toFixed(2) + "%";
+  function duration(seconds) {
+    const minutes = Math.ceil(seconds / 60);
+    const days = Math.floor(minutes / 1440);
+    const hours = Math.floor((minutes % 1440) / 60);
+    const rest = minutes % 60;
+    return [days ? `${days}d` : "", hours ? `${hours}h` : "", rest || (!days && !hours) ? `${rest}m` : ""].filter(Boolean).join(" ");
+  }
+  let timer;
+  let busy = false;
+  function render(data) {
+    const status = data.status;
+    const accounting = status.accounting;
+    const worker = data.worker;
+    const estimate = data.estimate;
+    if (estimate?.state === "estimating") {
+      text("eta-remaining", "About " + duration(estimate.remaining_seconds));
+      text("eta-finish", "Approximate finish: " + new Date(estimate.estimated_finish_at).toLocaleString());
+      text("eta-rate", `${estimate.usable_pairs_per_minute.toFixed(2)} usable pairs/min | ${count(estimate.observed_usable_pairs)} pairs in the last ${(estimate.window_seconds / 60).toFixed(1)} min | ${count(estimate.remaining_usable_pairs)} remaining across all splits`);
+    } else {
+      text("eta-remaining", estimate?.state === "complete" ? "Targets reached" :
+        estimate?.state === "paused" ? "Paused" : estimate?.state === "stalled" ? "Waiting for progress" : "Calculating...");
+      text("eta-finish", "");
+      text("eta-rate", "");
+    }
+    text("eta-note", estimate?.note || "Waiting for an active collector and enough recent observations.");
+    const inflight = status.inflight_attempts.length;
+    const state = status.failed_gate ? "stopped" :
+      inflight ? "running" : worker?.state || "unknown";
+    const label = status.failed_gate ? "Paused: quality gate" :
+      state === "running" ? "Running" : state === "completed" ? "Collection complete" :
+      state === "stopped" || state === "failed" ? "Paused" : "No worker state reported";
+    text("worker-state", label);
+    $("worker-state").className = "badge " + (["running","completed","stopped","failed"].includes(state) ? state : "");
+    text("run-label", `${data.run_name} | ${status.model} | ${status.providers.join(", ")}`);
+    const usable = status.usable_counts;
+    const targets = status.targets;
+    for (const split of ["train","validation","test"]) {
+      text(split + "-label", `${count(usable[split])} / ${count(targets[split])} (${percent(usable[split] / targets[split])})`);
+      $(split + "-progress").max = targets[split];
+      $(split + "-progress").value = usable[split];
+    }
+    text("train-count", count(usable.train));
+    text("train-caption", `of ${count(targets.train)} | ${percent(usable.train / targets.train)} complete`);
+    text("generation-count", count(accounting.generation_attempts));
+    text("next-checkpoint", status.generation_targets_met ? "All usable split targets reached" : `Next checkpoint: ${count(status.next_checkpoint)}`);
+    text("committed-cost", dollars(accounting.committed_usd));
+    text("budget-caption", `of $${Number(accounting.budget_usd).toFixed(2)} total cap, including earlier work`);
+    text("retry-count", count(accounting.retry_attempts));
+    text("retry-caption", status.retry_policy ?
+      `Up to ${status.retry_policy.max_retries_per_sample}/sample; at least ${status.retry_policy.min_retry_interval_seconds}s between retries` :
+      "Default bounded retry policy");
+    text("inflight-count", count(inflight));
+    text("assessment-count", count(accounting.assessment_attempts));
+    text("known-cost", dollars(accounting.known_cost_usd));
+    text("reserved-cost", dollars(accounting.uncertain_reserved_usd));
+    text("remaining-budget", dollars(accounting.remaining_usd));
+    text("unconfirmed-count", count(accounting.unconfirmed_billing_attempts));
+    text("quarantine-count", count(Object.values(status.quarantined_counts).reduce((sum,n) => sum+n,0)));
+    text("gate-policy", status.collection_policy ?
+      `${percent(status.collection_policy.structural_threshold)} structure / ${percent(status.collection_policy.usable_threshold)} usable` : "No automatic policy");
+    text("batch-update", worker?.updated_at ? new Date(worker.updated_at).toLocaleTimeString() : "Not available");
+    text("overall-progress", `${count(Object.values(usable).reduce((sum,n) => sum+n,0))} / ${count(Object.values(targets).reduce((sum,n) => sum+n,0))} usable pairs`);
+    const totals = {};
+    for (const split of Object.values(status.counts)) {
+      for (const [key,value] of Object.entries(split)) totals[key] = (totals[key] || 0) + value;
+    }
+    text("dispositions", `${count(totals.flagged || 0)} flagged | ${count(totals.rejected || 0)} rejected | ${count(totals.error || 0)} technical errors | ${count(totals.pending || 0)} candidates pending`);
+    const warning = [];
+    if (status.failed_gate) warning.push("A checkpoint failed. The collector is paused; no threshold is changed automatically.");
+    else if (["stopped","failed"].includes(state)) warning.push("Last stop reason: " + (worker?.stop_reason || "not recorded") + ".");
+    if (accounting.unconfirmed_billing_attempts) warning.push(`${count(accounting.unconfirmed_billing_attempts)} earlier charge(s) remain unconfirmed and fully reserved, not assumed free.`);
+    if (worker?.state === "running" && worker.updated_at && Date.now() - Date.parse(worker.updated_at) > 180000) {
+      warning.push("No recent batch update. A request or retry may be taking longer; the counts above come directly from the database.");
+    }
+    text("run-warning", warning.join(" "));
+    $("run-warning").hidden = warning.length === 0;
+    $("stages").replaceChildren();
+    for (const stage of status.stages) {
+      const row = document.createElement("tr");
+      const values = [
+        count(stage.generation_attempts) + (stage.final ? " (final)" : ""),
+        count(stage.attempted),
+        `${percent(stage.structural_fraction)} / ${percent(stage.structural_threshold)} required`,
+        stage.transport_failures === undefined ? "Not separated" : count(stage.transport_failures),
+        `${percent(stage.usable_fraction)} / ${percent(stage.usable_threshold)} required`,
+        stage.passed ? "Passed" : "Paused"
+      ];
+      values.forEach((value,index) => {
+        const cell = document.createElement("td");
+        cell.textContent = value;
+        if (index === 5) cell.className = stage.passed ? "pass" : "fail";
+        row.append(cell);
+      });
+      $("stages").append(row);
+    }
+    $("stage-empty").hidden = status.stages.length !== 0;
+    $("stage-table").hidden = status.stages.length === 0;
+    text("refresh-state", `Live database | Updated ${new Date(data.refreshed_at).toLocaleTimeString()} | Refreshes every 5 seconds`);
+    text("footer", `Local read-only dashboard. Closing it does not stop collection. ${status.policy_amendment_count || 0} policy amendment(s) recorded; historical failed gates remain in the audit trail. Final release is separate from collection.`);
+  }
+  async function refresh() {
+    if (busy) return;
+    clearTimeout(timer);
+    busy = true;
+    $("refresh-now").disabled = true;
+    const controller = new AbortController();
+    const deadline = setTimeout(() => controller.abort(), 8000);
+    try {
+      const response = await fetch("/api/status", {cache:"no-store", signal:controller.signal});
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || `HTTP ${response.status}`);
+      render(data);
+      $("connection-error").hidden = true;
+    } catch (error) {
+      text("connection-error", `Live update unavailable: ${error.message}. Any displayed values are the last successful snapshot. The collector is independent of this dashboard.`);
+      $("connection-error").hidden = false;
+      text("refresh-state", "Connection unavailable; retrying in 5 seconds");
+    } finally {
+      clearTimeout(deadline);
+      busy = false;
+      $("refresh-now").disabled = false;
+      timer = setTimeout(refresh, 5000);
+    }
+  }
+  $("refresh-now").addEventListener("click", refresh);
+  refresh();
+})();
+</script>
+</body>
+</html>

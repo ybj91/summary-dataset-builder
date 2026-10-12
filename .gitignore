@@ -6,6 +6,7 @@ __pycache__/
 .env
 .env.*
 !.env.example
+ApiKey.txt
 data/
 runs/
 .cache/

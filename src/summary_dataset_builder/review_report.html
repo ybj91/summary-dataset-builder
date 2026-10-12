@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-__SCRIPT_HASH__'; style-src 'unsafe-inline'; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Summarization dataset | __REPORT_TITLE__</title>
+<style>
+:root{color-scheme:light;--ink:#17243b;--muted:#55657c;--line:#dce3ed;--blue:#2455bd;--paper:#fff;--bg:#f3f6fb;--green:#167451;--amber:#925800;--red:#ad3445}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 "Segoe UI",system-ui,sans-serif}
+button,input,select,textarea{font:inherit}button,select{cursor:pointer}button{border:1px solid var(--line);background:white;color:var(--ink);border-radius:8px;padding:8px 13px;font-weight:600}button:hover{background:#edf2fc}button:disabled{opacity:.45;cursor:default}button.primary{background:var(--blue);color:white;border-color:var(--blue)}button.primary:hover{background:#19469f}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid #809ee6;outline-offset:2px}
+header{padding:28px max(24px,calc((100vw - 1512px)/2));background:#142740;color:white}header .top{display:flex;align-items:start;justify-content:space-between;gap:18px}.eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:#a6c8ff}h1{font-size:29px;letter-spacing:-.035em;margin:3px 0 5px}header p{margin:0;color:#c5d4e9;font-size:13px}.state-pill{white-space:nowrap;background:#263f5b;border:1px solid #557293;border-radius:30px;font-size:12px;padding:7px 13px;color:#ecf3ff}
+.page{max-width:1560px;margin:auto;padding:22px 24px 40px}.metrics{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;margin-bottom:16px}.metric{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px 17px}.metric strong{display:block;font-size:27px;line-height:1.2;font-variant-numeric:tabular-nums;letter-spacing:-.04em}.metric small{display:block;color:var(--muted);margin-top:5px;font-size:12px}.metric.cost strong{font-size:23px}.metric.good strong{color:var(--green)}.metric.warning strong{color:var(--amber)}
+.notice{border:1px solid #bdd0f1;background:#edf3ff;border-radius:9px;padding:12px 16px;font-size:13px;margin:0 0 16px}.notice strong{color:#20498e}.rubric{background:var(--paper);border:1px solid var(--line);border-radius:9px;margin-bottom:16px;padding:11px 16px;font-size:13px}.rubric summary{cursor:pointer;font-weight:600}.rubric p{margin:10px 0 5px}.rubric ol{margin:8px 0;padding-left:21px}.rubric code{overflow-wrap:anywhere}
+.toolbar{background:white;border:1px solid var(--line);border-radius:10px;padding:13px 16px;margin-bottom:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}.progress-area{flex:1;min-width:230px}.progress-area strong{font-size:13px}progress{width:100%;height:8px;display:block;margin-top:6px;accent-color:var(--blue)}.small{font-size:12px;color:var(--muted)}#save-state{margin-top:2px}.alert{padding:10px 14px;border-radius:8px;background:#fff3dc;border:1px solid #e6c176;font-size:13px;margin-bottom:14px}.alert[hidden]{display:none}.alert.error{background:#fff0f0;border-color:#e3b1b1;color:#922737}
+.workspace{display:grid;grid-template-columns:300px minmax(0,1fr);gap:18px;align-items:start}.sidebar{background:white;border:1px solid var(--line);border-radius:11px;overflow:hidden;position:sticky;top:16px}.filters{padding:15px;border-bottom:1px solid var(--line)}.filters h2{font-size:15px;margin:0 0 10px}.filters input,.filters select{width:100%;border:1px solid #bac6d8;background:white;border-radius:7px;padding:7px 8px;color:var(--ink);margin-bottom:9px;font-size:13px}.filters label{display:block;font-size:11px;font-weight:600;color:var(--muted);margin-bottom:3px}.filter-row{display:grid;grid-template-columns:1fr 1fr;gap:9px}.filters select{margin-bottom:5px}#visible-count{padding:10px 15px;font-size:12px;color:var(--muted);border-bottom:1px solid var(--line)}#record-list{max-height:62vh;overflow:auto;padding:7px}.record-button{display:block;width:100%;text-align:left;padding:11px 10px;border:1px solid transparent;border-radius:8px;margin:2px 0;font-weight:400;background:white}.record-button.active{border-color:#99b5e8;background:#eff4ff}.record-button .row{display:flex;align-items:center;justify-content:space-between;gap:6px}.record-title{font-size:12px;font-weight:600;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:175px}.record-id{display:block;font-size:11px;color:var(--muted);margin-top:4px}.record-preview{font-size:12px;color:var(--muted);display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;margin-top:3px}.badge{display:inline-block;border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:10px;font-weight:700;white-space:nowrap;background:#f2f5f9}.badge.accepted{background:#eaf6f0;color:#116143;border-color:#c2dfd1}.badge.flagged{background:#fff5dc;color:#855200;border-color:#ecd7aa}.badge.rejected,.badge.error{background:#fff0ef;color:#9f3540;border-color:#ebc8c8}
+.detail{min-width:0}.detail-head{display:flex;justify-content:space-between;align-items:start;gap:12px;margin:0 0 12px}.detail-head h2{font-size:20px;margin:0 0 3px;overflow-wrap:anywhere}.navigation{display:flex;gap:6px}.navigation button{font-size:13px;white-space:nowrap}.meta-line{display:flex;gap:7px;align-items:center;flex-wrap:wrap;font-size:12px;color:var(--muted)}.panels{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:15px;align-items:start}.panel{border:1px solid var(--line);border-radius:10px;background:white;overflow:hidden}.panel-heading{background:#f9fbfe;padding:11px 15px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:8px}.panel-heading h3{font-size:13px;margin:0}.panel-content{padding:17px 19px}.source-text{white-space:pre-wrap;overflow-wrap:anywhere;font:15px/1.85 Georgia,"Times New Roman",serif;max-height:70vh;overflow:auto}.summary-text{white-space:pre-wrap;overflow-wrap:anywhere;font-size:16px;line-height:1.8}.source-footer{padding:11px 16px;border-top:1px solid var(--line);font-size:12px}.source-footer a{color:var(--blue);overflow-wrap:anywhere}.source-footer span{color:var(--muted)}.stack{display:grid;gap:14px}.flag-box{font-size:12px;margin-top:12px;background:#fff6e5;border:1px solid #ecd9b3;padding:10px 12px;border-radius:7px}.flag-box p{margin:4px 0}.flag-box[hidden]{display:none}.reason{font-size:13px;color:var(--muted);margin-top:12px;white-space:pre-wrap;overflow-wrap:anywhere}.review-body{padding:15px 17px}.review-body label{font-size:12px;font-weight:600;display:block;margin-bottom:5px}.review-body select,.review-body textarea{width:100%;border:1px solid #b6c4d7;border-radius:7px;padding:9px;background:white;color:var(--ink)}.review-body textarea{min-height:126px;resize:vertical;font-size:13px;line-height:1.6;margin-top:0}.review-body select{font-size:13px;margin-bottom:13px}#decision-feedback{margin:7px 0 0;font-size:12px;color:var(--muted)}.readonly{padding:16px;font-size:13px;color:var(--muted);background:#f9fbfe}.technical{padding:12px 16px;font-size:12px}.technical summary{cursor:pointer;font-weight:600}.technical pre{font-size:11px;white-space:pre-wrap;overflow-wrap:anywhere;max-height:280px;overflow:auto}.empty{padding:35px;background:white;border:1px solid var(--line);border-radius:10px;color:var(--muted)}
+[hidden]{display:none!important}footer{font-size:11px;color:var(--muted);margin-top:20px;overflow-wrap:anywhere}.file-input{max-width:220px;font-size:12px}.import-label{font-size:12px;font-weight:600;display:grid;gap:3px}
+.browse-only .review-only{display:none!important}
+@media(min-width:1450px){.source-text{max-height:74vh}.metrics{gap:16px}}
+@media(max-width:1100px){.workspace{grid-template-columns:250px minmax(0,1fr)}.panels{grid-template-columns:1fr}.source-text{max-height:430px}.metrics{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:720px){header{padding:22px 16px}header .top{display:block}.state-pill{display:inline-block;margin-top:13px}.page{padding:16px 12px}.workspace{grid-template-columns:1fr}.sidebar{position:static}#record-list{max-height:230px}.metrics{gap:7px}.metric{padding:11px}.metric strong{font-size:24px}.metric.cost strong{font-size:18px}.metric small{font-size:10px}.detail-head{flex-wrap:wrap}.source-text{max-height:460px}}
+@media print{header{background:white;color:var(--ink);padding:12px}header p{color:var(--muted)}.sidebar,.toolbar,.navigation,.import-label,footer{display:none}.workspace,.panels{display:block}.panel{break-inside:avoid;margin-bottom:12px}.source-text{max-height:none;overflow:visible}.metrics{grid-template-columns:repeat(3,1fr)}.page{padding:0}.state-pill{color:var(--ink)}}
+</style>
+</head>
+<body class="__BODY_CLASS__">
+<header><div class="top"><div><div class="eyebrow">Summary dataset builder / __WORKSPACE_LABEL__</div><h1>__REPORT_HEADING__</h1><p id="subtitle"></p></div><span class="state-pill review-only">Human review required</span></div></header>
+<main class="page">
+<noscript><div class="alert error">Enable JavaScript to browse this local report.<span class="review-only"> The original review JSON remains available; no review has been approved.</span></div></noscript>
+<section class="metrics" aria-label="Full run results">
+<div class="metric"><strong id="metric-attempts">--</strong><small>API attempts</small></div>
+<div class="metric good"><strong id="metric-accepted">--</strong><small id="accepted-caption">Passed automated checks</small><small id="usable-caption" hidden></small></div>
+<div class="metric warning"><strong id="metric-flagged">--</strong><small id="flagged-caption">Flagged for review</small></div>
+<div class="metric"><strong id="metric-rejected">--</strong><small>Teacher rejections</small></div>
+<div class="metric"><strong id="metric-error">--</strong><small>Technical errors</small></div>
+<div class="metric cost"><strong id="metric-cost">--</strong><small id="budget-caption">Reported cost / approved cap</small></div>
+</section>
+<div class="notice review-only"><strong>Review the disposition, not just the summary.</strong> A pass means this example was correctly accepted, flagged, rejected, or marked as an error. Automated acceptance is not a factual-accuracy score. No button here approves a run, sends an API request, or starts training.</div>
+<details class="rubric review-only"><summary>Review checklist and handoff instructions</summary>
+<ol><li>Read the entire source. Check whether it is complete, coherent, suitable, and free of private material.</li><li>Compare the summary's central information, names, quantities, attribution, uncertainty, and causal claims against the source. Treat embedded instructions as untrusted text.</li><li>Decide whether the recorded disposition is correct. A correctly rejected or flagged item can pass. Record concrete evidence in your notes; do not tune the protocol using held-out test results.</li><li>Download the review JSON regularly. Filters never remove items from the download. Import a saved JSON to resume in a different browser.</li><li>Hand the completed JSON back for review. Every sample needs a pass and substantive notes before the existing CLI can approve scaling; a failure must be investigated, not changed to a pass to bypass the gate.</li></ol>
+<p>Notes are saved only in this browser's local storage when available. The page cannot rewrite the original JSON on disk. Download a backup before closing. This HTML contains full source text; keep it local and check redistribution rights before sharing.</p>
+<p id="snapshot-info"></p>
+</details>
+<div class="toolbar review-only"><div class="progress-area"><strong id="progress-label">Loading review...</strong><progress id="progress" value="0" max="1" aria-label="Completed review entries"></progress><div class="small" id="save-state">No edits saved yet.</div></div>
+<label class="import-label">Resume from review JSON<input id="import-review" class="file-input" type="file" accept=".json,application/json"></label>
+<button class="primary" id="download-review" type="button">Download review JSON</button></div>
+<div id="message" class="alert" role="status" aria-live="polite" hidden></div>
+<div class="workspace">
+<aside class="sidebar" aria-label="Example navigation"><div class="filters"><h2>Browse examples</h2>
+<div class="review-only"><label for="scope-filter">Scope</label><select id="scope-filter"><option value="sample">Review sample</option><option value="all">All generated results</option></select></div>
+<label for="search">Search source, summary, ID, or flag</label><input id="search" type="search" placeholder="Search examples...">
+<div class="filter-row"><div><label for="status-filter">Disposition</label><select id="status-filter"><option value="">All</option><option value="accepted">Accepted</option><option value="flagged">Flagged</option><option value="rejected">Rejected</option><option value="error">Error</option></select></div>
+<div><label for="split-filter">Split</label><select id="split-filter"><option value="">All</option><option value="train">Train</option><option value="validation">Validation</option><option value="test">Test</option></select></div></div>
+<div class="review-only"><label for="decision-filter">Human review</label><select id="decision-filter"><option value="">All decisions</option><option value="todo">Needs verdict or notes</option><option value="pass">Pass</option><option value="fail">Fail</option><option value="unsampled">Not in review sample</option></select></div>
+</div><div id="visible-count" aria-live="polite"></div><nav id="record-list" aria-label="Examples"></nav></aside>
+<section class="detail" aria-label="Selected example">
+<div id="empty" class="empty" hidden>No examples match these filters. Your notes and the full review sample are preserved.</div>
+<div id="selected-record">
+<div class="detail-head"><div><h2 id="record-heading"></h2><div class="meta-line"><span id="record-badge" class="badge"></span><span id="record-meta"></span></div></div><div class="navigation"><button type="button" id="previous">Previous</button><button type="button" id="next">Next</button></div></div>
+<div class="panels">
+<article class="panel"><div class="panel-heading"><h3>Original source</h3><span id="source-words" class="small"></span></div><div class="panel-content source-text" id="source-text"></div><div class="source-footer"><a id="source-link" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">Open original page</a><span id="source-link-disabled" hidden>No safe public URL available.</span></div></article>
+<div class="stack">
+<article class="panel"><div class="panel-heading"><h3>Teacher summary</h3><span id="summary-words" class="small"></span></div><div class="panel-content"><div id="summary-text" class="summary-text"></div><div id="quality-hold" class="flag-box" hidden><strong>Quarantined — excluded from training</strong><p id="quality-hold-reason"></p></div><div id="reason" class="reason"></div><div id="flags" class="flag-box" hidden></div></div></article>
+<details id="assessment-panel" class="panel technical" hidden><summary>Automated second-pass notes (same model, not independent verification)</summary><pre id="assessment-notes"></pre></details>
+<section class="panel review-only"><div class="panel-heading"><h3>Your review</h3><span id="review-tag" class="small"></span></div>
+<div id="review-editor" class="review-body"><label for="verdict">Is the recorded disposition correct?</label><select id="verdict"><option value="">Not reviewed</option><option value="pass">Pass - disposition is correct</option><option value="fail">Fail - needs investigation</option></select><label for="notes">Evidence and notes (required)</label><textarea id="notes" placeholder="Which claims are supported or unsupported? Is the rejection or flag justified?"></textarea><p id="decision-feedback"></p></div>
+<div id="review-readonly" class="readonly" hidden>This result is outside the saved review sample. Browse it for context; it is not added to or removed from the approval sample.</div>
+</section>
+<details class="panel technical"><summary>Provenance and raw completion</summary><pre id="provenance"></pre><strong>Raw completion (untrusted plain text)</strong><pre id="raw-response"></pre></details>
+</div></div></div>
+</section></div>
+<footer id="footer"></footer>
+</main>
+<script type="application/json" id="report-data">__REPORT_DATA__</script>
+<script id="report-code">
+"use strict";
+(() => {
+  const payload = JSON.parse(document.getElementById("report-data").textContent);
+  const browseOnly = payload.browse_only === true;
+  const original = browseOnly ? {items: []} : payload.review;
+  const draft = structuredClone(original);
+  const byId = new Map(draft.items.map(item => [item.document_id, item]));
+  const records = payload.records;
+  const storageKey = browseOnly ? null : "summary-review-v1:" + original.review_id;
+  const $ = id => document.getElementById(id);
+  const text = (id, value) => { $(id).textContent = value; };
+  let visible = [];
+  let selectedId = null;
+  let unsaved = false;
+  const complete = item => item.verdict !== null && item.notes.trim().length > 0;
+  const words = value => (value.trim().match(/\S+/g) || []).length;
+  const descriptions = {
+    unsupported_number: "A numeric expression was not matched in the source. Check context, rounding, units, and normalization; this heuristic can be wrong.",
+    long_summary: "Summary exceeds the screening word-length threshold. Check whether the extra detail is justified.",
+    repeated_sentence: "The sentence-matching heuristic found repetition. Inspect punctuation and abbreviations before deciding.",
+    multiple_paragraphs: "The requested output is one coherent paragraph.",
+    instruction_or_meta_content: "Possible source-instruction or meta-commentary contamination."
+  };
+  function announce(message, isError = false) {
+    text("message", message);
+    $("message").classList.toggle("error", isError);
+    $("message").hidden = false;
+  }
+  function equal(a, b) {
+    if (a === b) return true;
+    if (a === null || b === null || typeof a !== "object" || typeof b !== "object") return false;
+    if (Array.isArray(a) !== Array.isArray(b)) return false;
+    const keys = Object.keys(a);
+    return keys.length === Object.keys(b).length &&
+      keys.every(key => Object.hasOwn(b, key) && equal(a[key], b[key]));
+  }
+  function validDecision(item) {
+    return item && [null, "pass", "fail"].includes(item.verdict) && typeof item.notes === "string";
+  }
+  function validateImport(value) {
+    if (!value || !Array.isArray(value.items) || value.items.length !== original.items.length) {
+      throw new Error("The review sample is missing or has a different number of items.");
+    }
+    const normalized = structuredClone(value);
+    normalized.items.forEach((item, index) => {
+      if (!validDecision(item)) throw new Error("Verdicts must be null/pass/fail and notes must be text.");
+      item.verdict = original.items[index].verdict;
+      item.notes = original.items[index].notes;
+    });
+    if (!equal(normalized, original)) {
+      throw new Error("This JSON does not match the report. Only verdict and notes may change; IDs, sources and all sample items must be preserved.");
+    }
+  }
+  function persist() {
+    if (browseOnly) return;
+    try {
+      localStorage.setItem(storageKey, JSON.stringify({
+        review_id: original.review_id,
+        decisions: draft.items.map(({document_id, verdict, notes}) => ({document_id, verdict, notes}))
+      }));
+      text("save-state", "Draft saved in this browser. Download JSON to save a portable copy.");
+    } catch (error) {
+      text("save-state", "Browser storage unavailable. Download JSON before closing.");
+      announce("Autosave failed: " + error.message + " Your edits remain in this tab; download a JSON backup.", true);
+    }
+    unsaved = true;
+  }
+  function restore() {
+    if (browseOnly) return;
+    try {
+      const raw = localStorage.getItem(storageKey);
+      if (!raw) return;
+      const saved = JSON.parse(raw);
+      if (saved.review_id !== original.review_id || !Array.isArray(saved.decisions) ||
+          saved.decisions.length !== draft.items.length ||
+          saved.decisions.some((item, index) =>
+            !validDecision(item) || item.document_id !== draft.items[index].document_id)) {
+        throw new Error("Saved draft does not match this review sample.");
+      }
+      saved.decisions.forEach((item, index) => {
+        draft.items[index].verdict = item.verdict;
+        draft.items[index].notes = item.notes;
+      });
+      text("save-state", "Restored a draft from this browser. Download JSON to keep a portable copy.");
+      unsaved = true;
+    } catch (error) {
+      announce("Could not restore the browser draft: " + error.message + " Import a saved JSON backup if available.", true);
+      text("save-state", "Draft not restored. Download edits explicitly.");
+    }
+  }
+  function updateProgress() {
+    const done = draft.items.filter(complete).length;
+    const passed = draft.items.filter(item => complete(item) && item.verdict === "pass").length;
+    const failed = draft.items.filter(item => item.verdict === "fail").length;
+    text("progress-label", `${done} / ${draft.items.length} reviewed with notes | ${passed} pass | ${failed} fail`);
+    $("progress").max = draft.items.length;
+    $("progress").value = done;
+  }
+  function domain(record) {
+    try { return new URL(record.source.source_url).hostname || "Source document"; }
+    catch { return "Source document (invalid URL)"; }
+  }
+  function reviewLabel(record) {
+    const item = byId.get(record.document_id);
+    if (!item) return "Not sampled";
+    if (!complete(item)) return item.verdict ? "Needs notes" : "Not reviewed";
+    return item.verdict === "pass" ? "Reviewed: pass" : "Reviewed: fail";
+  }
+  function matches(record) {
+    const item = byId.get(record.document_id);
+    if (!browseOnly && $("scope-filter").value === "sample" && !item) return false;
+    if ($("status-filter").value && $("status-filter").value !== record.status) return false;
+    if ($("split-filter").value && $("split-filter").value !== record.source.split) return false;
+    const decision = browseOnly ? "" : $("decision-filter").value;
+    if (decision === "todo" && (!item || complete(item))) return false;
+    if (decision === "unsampled" && item) return false;
+    if (["pass", "fail"].includes(decision) && (!item || item.verdict !== decision)) return false;
+    const query = $("search").value.trim().toLocaleLowerCase();
+    return !query || [
+      record.document_id, record.source.source_id, record.source.source_url, record.source.text,
+      record.result?.summary || "", record.reason || "", ...(record.result?.flags || []),
+      record.quality_hold ? `quarantined ${record.quality_hold.reason}` : ""
+    ].join(" ").toLocaleLowerCase().includes(query);
+  }
+  function renderList() {
+    const list = $("record-list");
+    list.replaceChildren();
+    for (const record of visible) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "record-button" + (record.document_id === selectedId ? " active" : "");
+      button.setAttribute("aria-current", record.document_id === selectedId ? "true" : "false");
+      const row = document.createElement("span");
+      row.className = "row";
+      const title = document.createElement("span");
+      title.className = "record-title";
+      title.textContent = domain(record);
+      const badge = document.createElement("span");
+      badge.className = "badge " + (record.quality_hold ? "flagged" : record.status);
+      badge.textContent = record.status + (record.quality_hold ? " · quarantined" : "");
+      row.append(title, badge);
+      const meta = document.createElement("span");
+      meta.className = "record-id";
+      meta.textContent = browseOnly ? `${record.source.split} | ${record.document_id.slice(0, 16)}` :
+        `${record.source.split} | ${reviewLabel(record)}`;
+      const preview = document.createElement("span");
+      preview.className = "record-preview";
+      preview.textContent = record.result?.summary || record.reason || record.document_id;
+      button.append(row, meta, preview);
+      button.addEventListener("click", () => { selectedId = record.document_id; renderList(); renderDetail(); });
+      list.append(button);
+    }
+    text("visible-count", browseOnly ? `${visible.length} shown | ${records.length} generated results` :
+      `${visible.length} shown | ${draft.items.length} in saved sample | ${records.length} generated results`);
+  }
+  function decisionFeedback(item) {
+    text("decision-feedback", !item.verdict ? "Choose a verdict after reading the source." :
+      !item.notes.trim() ? "Add specific notes to complete this review entry." :
+      item.verdict === "fail" ? "Failure recorded. Investigate before approving scaling or export." :
+      "Pass and notes recorded. This does not approve the run.");
+  }
+  function renderDetail() {
+    const record = visible.find(row => row.document_id === selectedId);
+    $("empty").hidden = Boolean(record);
+    $("selected-record").hidden = !record;
+    if (!record) return;
+    const item = byId.get(record.document_id);
+    const index = visible.indexOf(record);
+    text("record-heading", domain(record));
+    text("record-badge", record.status + (record.quality_hold ? " · quarantined" : ""));
+    $("record-badge").className = "badge " + (record.quality_hold ? "flagged" : record.status);
+    text("record-meta", `${record.source.split} | ${record.document_id.slice(0, 16)}` +
+      (browseOnly ? "" : ` | ${item ? item.stratum : "Context only"}`));
+    text("source-text", record.source.text);
+    $("source-text").scrollTop = 0;
+    text("source-words", `${words(record.source.text)} words`);
+    const summary = record.result?.summary || "";
+    text("summary-text", summary || (record.status === "rejected" ? "No summary - teacher rejected this source." : "No validated summary available. See the raw completion below."));
+    text("summary-words", summary ? `${words(summary)} words` : "");
+    $("quality-hold").hidden = !record.quality_hold;
+    text("quality-hold-reason", record.quality_hold?.reason || "");
+    const assessment = browseOnly ? record.assessment : null;
+    $("assessment-panel").hidden = !assessment;
+    $("assessment-panel").open = false;
+    text("assessment-notes", assessment ? JSON.stringify(assessment, null, 2) : "");
+    text("reason", record.reason ? `Recorded reason: ${record.reason}` :
+      browseOnly ? "" : "No automated screening flags. Human source verification is still required.");
+    const flags = record.result?.flags || [];
+    $("flags").replaceChildren();
+    $("flags").hidden = flags.length === 0;
+    for (const flag of flags) {
+      const paragraph = document.createElement("p");
+      paragraph.textContent = browseOnly ? flag :
+        `${flag}: ${descriptions[flag] || "Inspect this recorded screening signal."}`;
+      $("flags").append(paragraph);
+    }
+    const link = $("source-link");
+    link.removeAttribute("href");
+    let safe = false;
+    try {
+      const url = new URL(record.source.source_url);
+      safe = ["http:", "https:"].includes(url.protocol) && !url.username && !url.password;
+      if (safe) { link.href = url.href; link.textContent = "Open original page: " + url.hostname; }
+    } catch { safe = false; }
+    link.hidden = !safe;
+    $("source-link-disabled").hidden = safe;
+    $("review-editor").hidden = browseOnly || !item;
+    $("review-readonly").hidden = browseOnly || Boolean(item);
+    text("review-tag", browseOnly ? "" : item ? "Saved review sample" : "Read only");
+    if (item) {
+      $("verdict").value = item.verdict || "";
+      $("notes").value = item.notes;
+      decisionFeedback(item);
+    }
+    const {text: ignoredSourceText, ...metadata} = record.source;
+    text("provenance", JSON.stringify({
+      ...metadata, model: record.response?.model || payload.status.model,
+      provider: record.response?.provider || null, prompt_version: payload.prompt_version,
+      request_id: record.response?.request_id || null, cost_usd: record.response?.cost_usd ?? null,
+      finish_reason: record.response?.finish_reason || null, quality_hold: record.quality_hold || null
+    }, null, 2));
+    text("raw-response", record.response?.content || "No raw completion recorded.");
+    $("previous").disabled = index === 0;
+    $("next").disabled = index === visible.length - 1;
+  }
+  function refresh() {
+    visible = records.filter(matches);
+    if (!visible.some(row => row.document_id === selectedId)) selectedId = visible[0]?.document_id || null;
+    renderList();
+    renderDetail();
+  }
+  function edit() {
+    if (browseOnly) return;
+    const item = byId.get(selectedId);
+    if (!item) return;
+    item.verdict = $("verdict").value || null;
+    item.notes = $("notes").value;
+    persist();
+    updateProgress();
+    decisionFeedback(item);
+    renderList();
+  }
+  function step(amount) {
+    const index = visible.findIndex(row => row.document_id === selectedId) + amount;
+    if (index >= 0 && index < visible.length) {
+      selectedId = visible[index].document_id;
+      renderList();
+      renderDetail();
+      $("record-list").querySelector(".active")?.scrollIntoView({block: "nearest"});
+    }
+  }
+  ["scope-filter", "status-filter", "split-filter", "decision-filter"].forEach(id => $(id).addEventListener("change", refresh));
+  $("search").addEventListener("input", refresh);
+  $("previous").addEventListener("click", () => step(-1));
+  $("next").addEventListener("click", () => step(1));
+  function enableReviewEditing() {
+    $("verdict").addEventListener("change", edit);
+    $("notes").addEventListener("input", edit);
+    $("download-review").addEventListener("click", () => {
+      const blob = new Blob([JSON.stringify(draft, null, 2) + "\n"], {type: "application/json;charset=utf-8"});
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = payload.download_name;
+      document.body.append(anchor);
+      anchor.click();
+      anchor.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 10000);
+      unsaved = false;
+      const done = draft.items.filter(complete).length;
+      const failed = draft.items.filter(item => item.verdict === "fail").length;
+      announce(`Review JSON download requested (${done}/${draft.items.length} complete, ${failed} fail). Check your Downloads folder. No approval was submitted.`);
+    });
+    $("import-review").addEventListener("change", async event => {
+      const file = event.target.files[0];
+      if (!file) return;
+      try {
+        if (file.size > 50 * 1024 * 1024) throw new Error("Review file exceeds the 50 MB import limit.");
+        const imported = JSON.parse(await file.text());
+        validateImport(imported);
+        if (unsaved && !window.confirm("Replace the current draft with this imported review? Download a backup first if needed.")) return;
+        imported.items.forEach((item, index) => {
+          draft.items[index].verdict = item.verdict;
+          draft.items[index].notes = item.notes;
+        });
+        persist();
+        updateProgress();
+        refresh();
+        announce("Imported verdicts and notes. All source records and sample membership were preserved.");
+      } catch (error) { announce("Import failed: " + error.message, true); }
+      finally { event.target.value = ""; }
+    });
+    window.addEventListener("beforeunload", event => {
+      if (unsaved) { event.preventDefault(); event.returnValue = ""; }
+    });
+  }
+  const counts = {};
+  records.forEach(row => { counts[row.status] = (counts[row.status] || 0) + 1; });
+  for (const status of ["accepted", "flagged", "rejected", "error"]) text("metric-" + status, counts[status] || 0);
+  const quarantined = Object.values(payload.status.quarantined_counts || {}).reduce((sum, count) => sum + count, 0);
+  if (quarantined > 0) {
+    const usable = Object.values(payload.status.usable_counts || {}).reduce((sum, count) => sum + count, 0);
+    text("usable-caption", `${usable} usable | ${quarantined} quarantined (excluded from training)`);
+    $("usable-caption").hidden = false;
+  }
+  text("metric-attempts", payload.status.accounting.attempts);
+  text("metric-cost", "$" + Number(payload.status.accounting.known_cost_usd).toFixed(6));
+  text("budget-caption", `Reported cost / $${payload.status.accounting.budget_usd} cap | ${payload.status.accounting.uncertain_attempts} uncertain`);
+  if (browseOnly) {
+    text("subtitle", "Generated samples; browsing only");
+    text("accepted-caption", "Accepted (automated)");
+    text("flagged-caption", "Flagged");
+    text("empty", "No examples match these filters.");
+    text("footer", `${payload.run_path} | ${payload.status.model} | Prompt: ${payload.prompt_version} | Snapshot: ${payload.generated_at}`);
+    $("scope-filter").value = "all";
+    $("scope-filter").disabled = true;
+    $("decision-filter").disabled = true;
+    $("status-filter").value = "accepted";
+  } else {
+    enableReviewEditing();
+    text("subtitle", `${payload.status.model} | ${payload.status.providers.join(", ")} | ${payload.status.dataset_mode}`);
+    text("snapshot-info", `Read-only run snapshot: ${payload.run_name}. Generated ${payload.generated_at}. If generation continues, create a fresh review sample; the approval CLI rejects stale samples.`);
+    text("footer", `${payload.run_path} | Prompt: ${payload.prompt_version} | Review: ${original.review_id} | No network requests or external assets.`);
+    $("scope-filter").options[0].textContent = `Review sample (${draft.items.length})`;
+    $("scope-filter").options[1].textContent = `All generated results (${records.length})`;
+    restore();
+    updateProgress();
+  }
+  refresh();
+})();
+</script>
+</body>
+</html>

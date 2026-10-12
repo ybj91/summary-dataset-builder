@@ -5,9 +5,19 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "summary-dataset-builder"
 version = "0.1.0"
-description = "Source-grounded summarization dataset pipeline scaffold"
+description = "Resumable source-grounded summarization dataset pipeline"
 requires-python = ">=3.11"
 dependencies = []
 
+[project.optional-dependencies]
+sources = ["datasets>=3,<5"]
+tokenizer = ["tokenizers>=0.20,<1"]
+
+[project.scripts]
+summary-dataset = "summary_dataset_builder.cli:main"
+
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+summary_dataset_builder = ["review_report.html", "progress_dashboard.html"]

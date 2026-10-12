@@ -1,0 +1,57 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "verdict",
+    "source_support",
+    "coverage",
+    "disposition_correct",
+    "issues",
+    "explanation"
+  ],
+  "properties": {
+    "verdict": {
+      "type": "string",
+      "enum": ["clear", "concern", "uncertain"]
+    },
+    "source_support": {
+      "type": "string",
+      "enum": ["supported", "unsupported", "uncertain", "not_applicable"]
+    },
+    "coverage": {
+      "type": "string",
+      "enum": ["adequate", "missing_key_information", "not_applicable"]
+    },
+    "disposition_correct": {"type": "boolean"},
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["category", "claim", "evidence", "explanation"],
+        "properties": {
+          "category": {
+            "type": "string",
+            "enum": [
+              "unsupported_claim",
+              "contradicted_claim",
+              "missing_key_information",
+              "attribution_or_uncertainty",
+              "misleading_emphasis",
+              "inappropriate_disposition",
+              "technical_error",
+              "screening_false_positive",
+              "instruction_following",
+              "uncertainty",
+              "other"
+            ]
+          },
+          "claim": {"type": "string"},
+          "evidence": {"type": "string"},
+          "explanation": {"type": "string"}
+        }
+      }
+    },
+    "explanation": {"type": "string"}
+  }
+}
